@@ -1,5 +1,9 @@
 package com.example.criminalintent
 
+import android.annotation.SuppressLint
+import android.icu.text.DateFormat
+import android.icu.text.SimpleDateFormat
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,10 +12,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.util.Locale
 
 private val LOG_TAG="CrimeListFragment"
 class CrimeListFragment: Fragment() {
@@ -38,7 +44,14 @@ class CrimeListFragment: Fragment() {
         fun bind(crime: Crime){
             this.crime = crime
             titleTextView.text = this.crime.title
-            dateTextView.text = this.crime.date.toString()
+
+            val dateFormated = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                SimpleDateFormat("EEEE dd MMMM yyyy hh:mm:ss").format(this.crime.date)
+            } else {
+                this.crime.date.toString()
+            }
+
+            dateTextView.text = dateFormated
             solvedImageView?.visibility = if (this.crime.isSolved) View.VISIBLE else View.GONE
 
         }
