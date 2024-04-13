@@ -1,7 +1,5 @@
 package com.example.criminalintent
 
-import android.annotation.SuppressLint
-import android.icu.text.DateFormat
 import android.icu.text.SimpleDateFormat
 import android.os.Build
 import android.os.Bundle
@@ -12,14 +10,13 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.util.Locale
 
-private val LOG_TAG="CrimeListFragment"
+private const val LOG_TAG="CrimeListFragment"
 class CrimeListFragment: Fragment() {
     private lateinit var crimeRecyclerView: RecyclerView
     private var adapter: CrimeAdapter? = null
@@ -45,13 +42,13 @@ class CrimeListFragment: Fragment() {
             this.crime = crime
             titleTextView.text = this.crime.title
 
-            val dateFormated = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                SimpleDateFormat("EEEE dd MMMM yyyy hh:mm:ss").format(this.crime.date)
+            val dateToString = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                SimpleDateFormat("EEEE dd MMMM yyyy hh:mm:ss", Locale.ENGLISH).format(this.crime.date)
             } else {
                 this.crime.date.toString()
             }
 
-            dateTextView.text = dateFormated
+            dateTextView.text = dateToString
             solvedImageView?.visibility = if (this.crime.isSolved) View.VISIBLE else View.GONE
 
         }
@@ -104,7 +101,7 @@ class CrimeListFragment: Fragment() {
         crimeRecyclerView.layoutManager = LinearLayoutManager(context)
 
         val crimes = crimeListViewModel.crimes
-        Log.d(LOG_TAG,"get crimeListViewModel ${crimeListViewModel}")
+        Log.d(LOG_TAG,"get crimeListViewModel $crimeListViewModel")
         adapter = CrimeAdapter(crimes)
         crimeRecyclerView.adapter = adapter
 
