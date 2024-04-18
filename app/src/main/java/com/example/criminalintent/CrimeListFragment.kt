@@ -11,6 +11,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,7 +21,7 @@ import java.util.Locale
 private const val LOG_TAG="CrimeListFragment"
 class CrimeListFragment: Fragment() {
     private lateinit var crimeRecyclerView: RecyclerView
-    private var adapter: CrimeAdapter? = null
+    private var adapter: CrimeAdapter? = CrimeAdapter(emptyList())
 
     private val crimeListViewModel: CrimeListViewModel by lazy {
         ViewModelProviders.of(this).get(CrimeListViewModel::class.java)
@@ -99,13 +101,33 @@ class CrimeListFragment: Fragment() {
 
         crimeRecyclerView = view.findViewById(R.id.crime_recycler_view) as RecyclerView
         crimeRecyclerView.layoutManager = LinearLayoutManager(context)
-
-        val crimes = crimeListViewModel.crimes
-        Log.d(LOG_TAG,"get crimeListViewModel $crimeListViewModel")
-        adapter = CrimeAdapter(crimes)
         crimeRecyclerView.adapter = adapter
 
+        Log.d(LOG_TAG,"get crimeListViewModel $crimeListViewModel")
+
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val obs = Observer<List<Crime>> { crimes ->
+            crimes?.let{
+                updateUI(it)
+            }}
+
+        crimeListViewModel.crimeListLiveData.observe(viewLifecycleOwner,
+            Observer { crimes ->
+                crimes?.let {
+                    updateUI(crimes)
+                }
+            })
+    }
+
+
+    private fun updateUI(crimes: List<Crime>) {
+        adapter = CrimeAdapter(crimes)
+        crimeRecyclerView.adapter = adapter
     }
 
     companion object {

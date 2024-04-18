@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.example.criminalintent"
-    compileSdk = 32
+    compileSdk = 33
 
     defaultConfig {
         applicationId = "com.example.criminalintent"
         minSdk = 21
-        targetSdk = 32
+        targetSdk = 25
         versionCode = 1
         versionName = "1.0"
 
@@ -54,6 +54,9 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-extensions:2.0.0")
     implementation("androidx.recyclerview:recyclerview:1.0.0")
     implementation("androidx.room:room-runtime:2.1.0-alpha04")
-    kapt("androidx.room:room-compiler:2.1.0-alpha04")
+    implementation("androidx.room:room-runtime:2.5.1")
+    implementation("androidx.room:room-ktx:2.5.1")
+    annotationProcessor("androidx.room:room-compiler:2.5.1")
+    kapt("androidx.room:room-compiler:2.5.1")
 
 }
