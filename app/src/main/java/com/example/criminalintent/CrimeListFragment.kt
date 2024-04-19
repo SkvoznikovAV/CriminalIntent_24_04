@@ -22,7 +22,6 @@ private const val LOG_TAG="CrimeListFragment"
 class CrimeListFragment: Fragment() {
     private lateinit var crimeRecyclerView: RecyclerView
     private var adapter: CrimeAdapter? = CrimeAdapter(emptyList())
-
     private val crimeListViewModel: CrimeListViewModel by lazy {
         ViewModelProviders.of(this).get(CrimeListViewModel::class.java)
     }
@@ -111,17 +110,24 @@ class CrimeListFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val obs = Observer<List<Crime>> { crimes ->
+        /*val obs = Observer<List<Crime>> { crimes ->
             crimes?.let{
                 updateUI(it)
             }}
 
-        crimeListViewModel.crimeListLiveData.observe(viewLifecycleOwner,
-            Observer { crimes ->
+        val obs2 = Observer { crimes:List<Crime> ->
+            crimes?.let{
+                updateUI(crimes)
+            }
+        }*/
+
+        crimeListViewModel.crimeListLiveData.observe(viewLifecycleOwner){ crimes ->
                 crimes?.let {
                     updateUI(crimes)
                 }
-            })
+            }
+        //crimeListViewModel.crimeListLiveData.observe(viewLifecycleOwner,obs)
+
     }
 
 
