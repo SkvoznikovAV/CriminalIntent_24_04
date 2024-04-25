@@ -1,5 +1,6 @@
 package com.example.criminalintent
 
+import android.content.Context
 import android.icu.text.SimpleDateFormat
 import android.os.Build
 import android.os.Bundle
@@ -17,13 +18,30 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.util.Locale
+import java.util.UUID
 
 private const val LOG_TAG="CrimeListFragment"
 class CrimeListFragment: Fragment() {
+    interface Callbacks {
+        fun onCrimeSelected(crimeId: UUID)
+    }
+
+    private var callbacks: Callbacks? = null
     private lateinit var crimeRecyclerView: RecyclerView
     private var adapter: CrimeAdapter? = CrimeAdapter(emptyList())
     private val crimeListViewModel: CrimeListViewModel by lazy {
         ViewModelProviders.of(this).get(CrimeListViewModel::class.java)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callbacks = context as Callbacks?
+
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        callbacks = null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,7 +73,7 @@ class CrimeListFragment: Fragment() {
         }
 
         override fun onClick(p0: View?) {
-            Toast.makeText(context,"${crime.title} pressed",Toast.LENGTH_SHORT).show()
+            callbacks?.onCrimeSelected(crime.id)
         }
 
         init {
@@ -102,7 +120,7 @@ class CrimeListFragment: Fragment() {
         crimeRecyclerView.layoutManager = LinearLayoutManager(context)
         crimeRecyclerView.adapter = adapter
 
-        Log.d(LOG_TAG,"get crimeListViewModel $crimeListViewModel")
+        //Log.d(LOG_TAG,"get crimeListViewModel $crimeListViewModel")
 
         return view
     }
@@ -119,17 +137,31 @@ class CrimeListFragment: Fragment() {
             crimes?.let{
                 updateUI(crimes)
             }
+        }
+
+        val obs3: Observer<List<Crime>> = object : Observer<List<Crime>> {
+            override fun onChanged(crimes: List<Crime>?) {
+                crimes?.let{
+                    updateUI(crimes)
+                }
+            }
+
         }*/
+
 
         crimeListViewModel.crimeListLiveData.observe(viewLifecycleOwner){ crimes ->
                 crimes?.let {
                     updateUI(crimes)
                 }
             }
-        //crimeListViewModel.crimeListLiveData.observe(viewLifecycleOwner,obs)
+        //crimeListViewModel.crimeListLiveData.observe(viewLifecycleOwner,obs3)
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(LOG_TAG,"CrimeListFragment onDestroy")
+    }
 
     private fun updateUI(crimes: List<Crime>) {
         adapter = CrimeAdapter(crimes)

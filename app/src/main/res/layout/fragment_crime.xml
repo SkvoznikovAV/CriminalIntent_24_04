@@ -6,6 +6,11 @@
     android:layout_height="match_parent"
     android:layout_margin="16dp">
     <TextView
+        android:id="@+id/crime_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="id"/>
+    <TextView
         style="?android:listSeparatorTextViewStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

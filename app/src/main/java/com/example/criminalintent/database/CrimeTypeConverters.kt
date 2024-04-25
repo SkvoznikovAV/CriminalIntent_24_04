@@ -11,15 +11,13 @@ class CrimeTypeConverters {
     }
     @TypeConverter
     fun toDate(millis: Long?): Date? {
-        return Date()
-//        return millis?.let{
-//            Date(it)
-//        }
+        return millis?.let{
+            Date(it)
+        }
     }
     @TypeConverter
     fun toUUID(uuid: String?): UUID? {
-        return UUID.randomUUID()
-        //return UUID.fromString(uuid)
+        return UUID.fromString(uuid)
     }
     @TypeConverter
     fun fromUUID(uuid: UUID?): String?{
