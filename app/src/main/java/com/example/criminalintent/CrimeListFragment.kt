@@ -61,11 +61,7 @@ class CrimeListFragment: Fragment() {
             this.crime = crime
             titleTextView.text = this.crime.title
 
-            val dateToString = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                SimpleDateFormat("EEEE dd MMMM yyyy hh:mm:ss", Locale.ENGLISH).format(this.crime.date)
-            } else {
-                this.crime.date.toString()
-            }
+            val dateToString = SimpleDateFormat("EEEE dd MMMM yyyy hh:mm:ss", Locale.ENGLISH).format(this.crime.date)
 
             dateTextView.text = dateToString
             solvedImageView?.visibility = if (this.crime.isSolved) View.VISIBLE else View.GONE
@@ -81,7 +77,7 @@ class CrimeListFragment: Fragment() {
         }
     }
 
-    private inner class CrimeAdapter(val crimes: List<Crime>):RecyclerView.Adapter<CrimeHolder>(){
+    private inner class CrimeAdapter(val crimes: List<Crime>): RecyclerView.Adapter<CrimeHolder>(){
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
             val itemLayoutId= when (viewType){
                 1 -> R.layout.list_item_crime_require_police
@@ -148,7 +144,7 @@ class CrimeListFragment: Fragment() {
 
         }*/
 
-
+        Log.d(LOG_TAG,"CrimeListFragment onViewCreated")
         crimeListViewModel.crimeListLiveData.observe(viewLifecycleOwner){ crimes ->
                 crimes?.let {
                     updateUI(crimes)

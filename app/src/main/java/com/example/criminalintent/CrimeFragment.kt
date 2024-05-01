@@ -1,5 +1,6 @@
 package com.example.criminalintent
 
+import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -14,12 +15,17 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import java.util.Date
+import java.util.Locale
 import java.util.UUID
 
 private const val LOG_TAG = "CrimeFragment"
 private const val ARG_CRIME_ID = "crime_id"
+private const val DIALOG_DATE = "DialogDate"
+private const val DIALOG_TIME = "DialogTime"
+private const val REQUEST_DATE = 0
 
-class CrimeFragment: Fragment() {
+class CrimeFragment: Fragment(), DatePickerFragment.Callbacks {
     private lateinit var crime: Crime
     private lateinit var titleField: EditText
     private lateinit var dateButton: Button
@@ -51,7 +57,7 @@ class CrimeFragment: Fragment() {
 
         dateButton.apply {
             text = crime.date.toString()
-            isEnabled = false
+            //isEnabled = false
         }
 
         return view
@@ -72,7 +78,10 @@ class CrimeFragment: Fragment() {
     private fun updateUI(){
         idField.text = crime.id.toString()
         titleField.setText(crime.title)
-        dateButton.text = crime.date.toString()
+
+        val dateToString: String = SimpleDateFormat("EEEE dd MMMM yyyy hh:mm:ss", Locale.ENGLISH).format(crime.date)
+        //dateButton.text = crime.date.toString()
+        dateButton.text = dateToString
         solvedCheckBox.apply {
             isChecked = crime.isSolved
             jumpDrawablesToCurrentState()
@@ -84,23 +93,22 @@ class CrimeFragment: Fragment() {
         super.onStart()
 
         val titleWatcher = object:TextWatcher{
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 crime.title = p0.toString()
-
             }
-
-            override fun afterTextChanged(p0: Editable?) {
-
-            }
-
+            override fun afterTextChanged(p0: Editable?) {}
         }
 
         titleField.addTextChangedListener(titleWatcher)
         solvedCheckBox.setOnCheckedChangeListener { _, isChecked -> crime.isSolved = isChecked  }
+
+        dateButton.setOnClickListener{
+            DatePickerFragment.newInstance(crime.date).apply {
+                setTargetFragment(this@CrimeFragment, REQUEST_DATE)
+                show(this@CrimeFragment.requireFragmentManager(), DIALOG_DATE)
+            }
+        }
     }
 
     override fun onStop() {
@@ -118,6 +126,16 @@ class CrimeFragment: Fragment() {
             return CrimeFragment().apply {
                 arguments = args
             }
+        }
+    }
+
+    override fun onDateSelected(date: Date) {
+        crime.date = date
+        updateUI()
+
+        TimePickerFragment().apply {
+            //setTargetFragment(this@CrimeFragment, REQUEST_DATE)
+            show(this@CrimeFragment.requireFragmentManager(), DIALOG_TIME)
         }
     }
 }
