@@ -61,7 +61,7 @@ class CrimeListFragment: Fragment() {
             this.crime = crime
             titleTextView.text = this.crime.title
 
-            val dateToString = SimpleDateFormat("EEEE dd MMMM yyyy hh:mm:ss", Locale.ENGLISH).format(this.crime.date)
+            val dateToString = SimpleDateFormat("EEEE dd MMMM yyyy HH:mm:ss", Locale.ENGLISH).format(this.crime.date)
 
             dateTextView.text = dateToString
             solvedImageView?.visibility = if (this.crime.isSolved) View.VISIBLE else View.GONE

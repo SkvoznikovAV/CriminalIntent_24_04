@@ -15,7 +15,9 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import java.util.Calendar
 import java.util.Date
+import java.util.GregorianCalendar
 import java.util.Locale
 import java.util.UUID
 
@@ -24,8 +26,9 @@ private const val ARG_CRIME_ID = "crime_id"
 private const val DIALOG_DATE = "DialogDate"
 private const val DIALOG_TIME = "DialogTime"
 private const val REQUEST_DATE = 0
+private const val REQUEST_TIME = 1
 
-class CrimeFragment: Fragment(), DatePickerFragment.Callbacks {
+class CrimeFragment: Fragment(), DatePickerFragment.Callbacks, TimePickerFragment.Callbacks {
     private lateinit var crime: Crime
     private lateinit var titleField: EditText
     private lateinit var dateButton: Button
@@ -79,7 +82,7 @@ class CrimeFragment: Fragment(), DatePickerFragment.Callbacks {
         idField.text = crime.id.toString()
         titleField.setText(crime.title)
 
-        val dateToString: String = SimpleDateFormat("EEEE dd MMMM yyyy hh:mm:ss", Locale.ENGLISH).format(crime.date)
+        val dateToString: String = SimpleDateFormat("EEEE dd MMMM yyyy HH:mm:ss", Locale.ENGLISH).format(crime.date)
         //dateButton.text = crime.date.toString()
         dateButton.text = dateToString
         solvedCheckBox.apply {
@@ -134,8 +137,19 @@ class CrimeFragment: Fragment(), DatePickerFragment.Callbacks {
         updateUI()
 
         TimePickerFragment().apply {
-            //setTargetFragment(this@CrimeFragment, REQUEST_DATE)
+            setTargetFragment(this@CrimeFragment, REQUEST_TIME)
             show(this@CrimeFragment.requireFragmentManager(), DIALOG_TIME)
         }
+    }
+
+    override fun onTimeSelected(hour: Int, minute: Int) {
+        val calendar = Calendar.getInstance()
+        calendar.time = crime.date
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        crime.date = GregorianCalendar(year, month, day,hour,minute).time
+        updateUI()
     }
 }

@@ -21,7 +21,6 @@ class DatePickerFragment: DialogFragment() {
             targetFragment?.let { fragment ->
                 (fragment as Callbacks).onDateSelected(resultDate)
             }
-
         }
 
         val date = arguments?.getSerializable(ARG_DATE) as Date
