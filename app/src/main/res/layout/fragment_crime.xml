@@ -40,4 +40,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/crime_requires_police"/>
+
+    <Button
+        android:id="@+id/delete_crime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/txt_remove_crime" />
 </LinearLayout>

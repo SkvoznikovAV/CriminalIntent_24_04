@@ -26,6 +26,10 @@ class CrimeDetailViewModel : ViewModel() {
         crimeRepository.updateCrime(crime)
     }
 
+    fun removeCrime(crime: Crime){
+        crimeRepository.removeCrime(crime)
+    }
+
     /*fun loadCrime(crimeId: UUID){
         this.crimeId = crimeId
         crimeLiveData = crimeRepository.getCrime(crimeId)

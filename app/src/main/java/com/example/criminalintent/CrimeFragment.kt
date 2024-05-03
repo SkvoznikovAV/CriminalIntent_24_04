@@ -35,6 +35,7 @@ class CrimeFragment: Fragment(), DatePickerFragment.Callbacks, TimePickerFragmen
     private lateinit var solvedCheckBox: CheckBox
     private lateinit var idField: TextView
     private lateinit var requiresPoliceCheckBox: CheckBox
+    private lateinit var removeCrimeButton: Button
 
     private val crimeDetailViewModel: CrimeDetailViewModel by lazy {
         ViewModelProviders.of(this).get(CrimeDetailViewModel::class.java)
@@ -60,6 +61,7 @@ class CrimeFragment: Fragment(), DatePickerFragment.Callbacks, TimePickerFragmen
         solvedCheckBox = view.findViewById(R.id.crime_solved) as CheckBox
         idField = view.findViewById(R.id.crime_id) as TextView
         requiresPoliceCheckBox = view.findViewById(R.id.requires_police)
+        removeCrimeButton = view.findViewById(R.id.delete_crime)
 
         dateButton.apply {
             text = crime.date.toString()
@@ -120,12 +122,20 @@ class CrimeFragment: Fragment(), DatePickerFragment.Callbacks, TimePickerFragmen
                 show(this@CrimeFragment.requireFragmentManager(), DIALOG_DATE)
             }
         }
+
+        removeCrimeButton.setOnClickListener {
+            //crime.isRemoved=true
+            crimeDetailViewModel.removeCrime(crime)
+            requireFragmentManager().popBackStack()
+        }
     }
 
     override fun onStop() {
         super.onStop()
 
-        crimeDetailViewModel.saveCrime(crime)
+        //if (!crime.isRemoved){
+            crimeDetailViewModel.saveCrime(crime)
+        //}
     }
 
     companion object{

@@ -31,6 +31,7 @@ class CrimeListFragment: Fragment() {
 
     private var callbacks: Callbacks? = null
     private lateinit var crimeRecyclerView: RecyclerView
+    private lateinit var emptyListTextView: TextView
     private var adapter: CrimeAdapter? = CrimeAdapter(emptyList())
     private val crimeListViewModel: CrimeListViewModel by lazy {
         ViewModelProviders.of(this).get(CrimeListViewModel::class.java)
@@ -122,6 +123,8 @@ class CrimeListFragment: Fragment() {
         crimeRecyclerView.layoutManager = LinearLayoutManager(context)
         crimeRecyclerView.adapter = adapter
 
+        emptyListTextView = view.findViewById(R.id.empty_list_text_view) as TextView
+
         //Log.d(LOG_TAG,"get crimeListViewModel $crimeListViewModel")
 
         return view
@@ -168,6 +171,12 @@ class CrimeListFragment: Fragment() {
     private fun updateUI(crimes: List<Crime>) {
         adapter = CrimeAdapter(crimes)
         crimeRecyclerView.adapter = adapter
+
+        if (crimes.isEmpty()) {
+            emptyListTextView.visibility = View.VISIBLE
+        } else {
+            emptyListTextView.visibility = View.GONE
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

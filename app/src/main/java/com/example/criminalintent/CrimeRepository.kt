@@ -34,6 +34,12 @@ class CrimeRepository private constructor(context: Context) {
             crimeDao.addCrime(crime)
         }
     }
+
+    fun removeCrime(crime: Crime){
+        executor.execute {
+            crimeDao.removeCrime(crime)
+        }
+    }
     private fun getCrimesTest():LiveData<List<Crime>>{
         val crimes:List<Crime> = listOf(Crime(title = "test1", isSolved = true),
             Crime(title = "test2", isSolved = false),

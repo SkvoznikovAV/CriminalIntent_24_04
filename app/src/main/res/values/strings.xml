@@ -6,4 +6,6 @@
     <string name="crime_solved_label">Solved</string>
     <string name="new_crime">New Crime</string>
     <string name="crime_requires_police">Requires police</string>
+    <string name="message_empty_list">Пустой список. Чтобы добавить преступление нажмите + в меню</string>
+    <string name="txt_remove_crime">remove crime</string>
 </resources>
