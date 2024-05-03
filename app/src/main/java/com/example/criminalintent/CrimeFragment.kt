@@ -34,6 +34,8 @@ class CrimeFragment: Fragment(), DatePickerFragment.Callbacks, TimePickerFragmen
     private lateinit var dateButton: Button
     private lateinit var solvedCheckBox: CheckBox
     private lateinit var idField: TextView
+    private lateinit var requiresPoliceCheckBox: CheckBox
+
     private val crimeDetailViewModel: CrimeDetailViewModel by lazy {
         ViewModelProviders.of(this).get(CrimeDetailViewModel::class.java)
     }
@@ -57,6 +59,7 @@ class CrimeFragment: Fragment(), DatePickerFragment.Callbacks, TimePickerFragmen
         dateButton = view.findViewById(R.id.crime_date) as Button
         solvedCheckBox = view.findViewById(R.id.crime_solved) as CheckBox
         idField = view.findViewById(R.id.crime_id) as TextView
+        requiresPoliceCheckBox = view.findViewById(R.id.requires_police)
 
         dateButton.apply {
             text = crime.date.toString()
@@ -89,6 +92,10 @@ class CrimeFragment: Fragment(), DatePickerFragment.Callbacks, TimePickerFragmen
             isChecked = crime.isSolved
             jumpDrawablesToCurrentState()
         }
+        requiresPoliceCheckBox.apply {
+            isChecked = crime.requiresPolice
+            jumpDrawablesToCurrentState()
+        }
 
     }
 
@@ -105,6 +112,7 @@ class CrimeFragment: Fragment(), DatePickerFragment.Callbacks, TimePickerFragmen
 
         titleField.addTextChangedListener(titleWatcher)
         solvedCheckBox.setOnCheckedChangeListener { _, isChecked -> crime.isSolved = isChecked  }
+        requiresPoliceCheckBox.setOnCheckedChangeListener { _, isChecked -> crime.requiresPolice = isChecked  }
 
         dateButton.setOnClickListener{
             DatePickerFragment.newInstance(crime.date).apply {
