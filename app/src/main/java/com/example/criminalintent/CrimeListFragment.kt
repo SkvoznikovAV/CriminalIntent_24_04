@@ -18,7 +18,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import java.util.Locale
 import java.util.UUID
@@ -32,7 +34,7 @@ class CrimeListFragment: Fragment() {
     private var callbacks: Callbacks? = null
     private lateinit var crimeRecyclerView: RecyclerView
     private lateinit var emptyListTextView: TextView
-    private var adapter: CrimeAdapter? = CrimeAdapter(emptyList())
+    private var adapter: CrimeAdapter = CrimeAdapter(emptyList())
     private val crimeListViewModel: CrimeListViewModel by lazy {
         ViewModelProviders.of(this).get(CrimeListViewModel::class.java)
     }
@@ -84,9 +86,10 @@ class CrimeListFragment: Fragment() {
         }
     }
 
-    private inner class CrimeAdapter(val crimes: List<Crime>): RecyclerView.Adapter<CrimeHolder>(){
+    //private inner class CrimeAdapter(val crimes: List<Crime>): RecyclerView.Adapter<CrimeHolder>(){
+    private inner class CrimeAdapter(var crimes: List<Crime>): ListAdapter<Crime, CrimeHolder>(CrimeDiffCallback){
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
-            val itemLayoutId= when (viewType){
+            val itemLayoutId = when (viewType){
                 1 -> R.layout.list_item_crime_require_police
                 else -> R.layout.list_item_crime
             }
@@ -122,8 +125,8 @@ class CrimeListFragment: Fragment() {
         crimeRecyclerView = view.findViewById(R.id.crime_recycler_view) as RecyclerView
         crimeRecyclerView.layoutManager = LinearLayoutManager(context)
         crimeRecyclerView.adapter = adapter
-
         emptyListTextView = view.findViewById(R.id.empty_list_text_view) as TextView
+
 
         //Log.d(LOG_TAG,"get crimeListViewModel $crimeListViewModel")
 
@@ -152,13 +155,12 @@ class CrimeListFragment: Fragment() {
             }
 
         }*/
-
         Log.d(LOG_TAG,"CrimeListFragment onViewCreated")
         crimeListViewModel.crimeListLiveData.observe(viewLifecycleOwner){ crimes ->
-                crimes?.let {
-                    updateUI(crimes)
-                }
+            crimes?.let {
+                updateUI(crimes)
             }
+        }
         //crimeListViewModel.crimeListLiveData.observe(viewLifecycleOwner,obs3)
 
     }
@@ -169,8 +171,9 @@ class CrimeListFragment: Fragment() {
     }
 
     private fun updateUI(crimes: List<Crime>) {
-        adapter = CrimeAdapter(crimes)
-        crimeRecyclerView.adapter = adapter
+        adapter.crimes = crimes
+        //adapter.submitList(crimes as MutableList<Crime>)
+        adapter.notifyDataSetChanged()
 
         if (crimes.isEmpty()) {
             emptyListTextView.visibility = View.VISIBLE
@@ -200,5 +203,15 @@ class CrimeListFragment: Fragment() {
         fun newInstance(): CrimeListFragment{
             return CrimeListFragment()
         }
+    }
+}
+
+object CrimeDiffCallback : DiffUtil.ItemCallback<Crime>() {
+    override fun areItemsTheSame(oldItem: Crime, newItem: Crime): Boolean {
+        return oldItem == newItem
+    }
+
+    override fun areContentsTheSame(oldItem: Crime, newItem: Crime): Boolean {
+        return oldItem.id == newItem.id
     }
 }
