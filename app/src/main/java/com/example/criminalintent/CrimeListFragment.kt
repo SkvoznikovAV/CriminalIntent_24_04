@@ -34,7 +34,7 @@ class CrimeListFragment: Fragment() {
     private var callbacks: Callbacks? = null
     private lateinit var crimeRecyclerView: RecyclerView
     private lateinit var emptyListTextView: TextView
-    private var adapter: CrimeAdapter = CrimeAdapter(emptyList())
+    private var adapter: CrimeAdapter = CrimeAdapter()
     private val crimeListViewModel: CrimeListViewModel by lazy {
         ViewModelProviders.of(this).get(CrimeListViewModel::class.java)
     }
@@ -87,7 +87,7 @@ class CrimeListFragment: Fragment() {
     }
 
     //private inner class CrimeAdapter(val crimes: List<Crime>): RecyclerView.Adapter<CrimeHolder>(){
-    private inner class CrimeAdapter(var crimes: List<Crime>): ListAdapter<Crime, CrimeHolder>(CrimeDiffCallback){
+    private inner class CrimeAdapter : ListAdapter<Crime, CrimeHolder>(CrimeDiffCallback){
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
             val itemLayoutId = when (viewType){
                 1 -> R.layout.list_item_crime_require_police
@@ -98,18 +98,18 @@ class CrimeListFragment: Fragment() {
             return CrimeHolder(view)
         }
 
-        override fun getItemCount(): Int {
-            return crimes.size
-        }
+//        override fun getItemCount(): Int {
+//            return crimes.size
+//        }
 
         override fun onBindViewHolder(holder: CrimeHolder, position: Int) {
-            val crime = crimes[position]
+            val crime = getItem(position)
             holder.bind(crime)
         }
 
         override fun getItemViewType(position: Int): Int {
             var viewType = 0
-            if (crimes[position].requiresPolice) viewType = 1
+            if (getItem(position).requiresPolice) viewType = 1
 
             return viewType
         }
@@ -171,9 +171,9 @@ class CrimeListFragment: Fragment() {
     }
 
     private fun updateUI(crimes: List<Crime>) {
-        adapter.crimes = crimes
-        //adapter.submitList(crimes as MutableList<Crime>)
-        adapter.notifyDataSetChanged()
+        //adapter.crimes = crimes
+        adapter.submitList(crimes as MutableList<Crime>)
+        //adapter.notifyDataSetChanged()
 
         if (crimes.isEmpty()) {
             emptyListTextView.visibility = View.VISIBLE
