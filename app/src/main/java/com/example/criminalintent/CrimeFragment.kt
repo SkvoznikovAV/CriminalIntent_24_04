@@ -49,7 +49,6 @@ class CrimeFragment: Fragment(), DatePickerFragment.Callbacks, TimePickerFragmen
         crimeDetailViewModel.loadCrime(crimeId)
 
     }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -65,7 +64,6 @@ class CrimeFragment: Fragment(), DatePickerFragment.Callbacks, TimePickerFragmen
 
         dateButton.apply {
             text = crime.date.toString()
-            //isEnabled = false
         }
 
         return view
@@ -88,7 +86,6 @@ class CrimeFragment: Fragment(), DatePickerFragment.Callbacks, TimePickerFragmen
         titleField.setText(crime.title)
 
         val dateToString: String = SimpleDateFormat("EEEE dd MMMM yyyy HH:mm:ss", Locale.ENGLISH).format(crime.date)
-        //dateButton.text = crime.date.toString()
         dateButton.text = dateToString
         solvedCheckBox.apply {
             isChecked = crime.isSolved
@@ -124,7 +121,6 @@ class CrimeFragment: Fragment(), DatePickerFragment.Callbacks, TimePickerFragmen
         }
 
         removeCrimeButton.setOnClickListener {
-            //crime.isRemoved=true
             crimeDetailViewModel.removeCrime(crime)
             requireFragmentManager().popBackStack()
         }
@@ -132,10 +128,7 @@ class CrimeFragment: Fragment(), DatePickerFragment.Callbacks, TimePickerFragmen
 
     override fun onStop() {
         super.onStop()
-
-        //if (!crime.isRemoved){
-            crimeDetailViewModel.saveCrime(crime)
-        //}
+        crimeDetailViewModel.saveCrime(crime)
     }
 
     companion object{

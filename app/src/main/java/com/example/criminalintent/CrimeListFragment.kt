@@ -42,7 +42,6 @@ class CrimeListFragment: Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         callbacks = context as Callbacks?
-
     }
 
     override fun onDetach() {
@@ -74,7 +73,6 @@ class CrimeListFragment: Fragment() {
 
             dateTextView.text = dateToString
             solvedImageView?.visibility = if (this.crime.isSolved) View.VISIBLE else View.GONE
-
         }
 
         override fun onClick(p0: View?) {
@@ -97,10 +95,6 @@ class CrimeListFragment: Fragment() {
             val view = layoutInflater.inflate(itemLayoutId,parent,false)
             return CrimeHolder(view)
         }
-
-//        override fun getItemCount(): Int {
-//            return crimes.size
-//        }
 
         override fun onBindViewHolder(holder: CrimeHolder, position: Int) {
             val crime = getItem(position)
@@ -171,9 +165,7 @@ class CrimeListFragment: Fragment() {
     }
 
     private fun updateUI(crimes: List<Crime>) {
-        //adapter.crimes = crimes
         adapter.submitList(crimes as MutableList<Crime>)
-        //adapter.notifyDataSetChanged()
 
         if (crimes.isEmpty()) {
             emptyListTextView.visibility = View.VISIBLE
@@ -205,7 +197,6 @@ class CrimeListFragment: Fragment() {
         }
     }
 }
-
 object CrimeDiffCallback : DiffUtil.ItemCallback<Crime>() {
     override fun areItemsTheSame(oldItem: Crime, newItem: Crime): Boolean {
         return oldItem == newItem

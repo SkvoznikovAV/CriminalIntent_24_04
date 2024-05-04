@@ -8,10 +8,6 @@ import java.util.UUID
 
 class CrimeDetailViewModel : ViewModel() {
     private val crimeRepository = CrimeRepository.get()
-
-    //private lateinit var crimeId : UUID
-    //lateinit var crimeLiveData: LiveData<Crime?>
-
     private val crimeIdLiveData = MutableLiveData<UUID>()
 
     var crimeLiveData: LiveData<Crime?> =
@@ -29,10 +25,4 @@ class CrimeDetailViewModel : ViewModel() {
     fun removeCrime(crime: Crime){
         crimeRepository.removeCrime(crime)
     }
-
-    /*fun loadCrime(crimeId: UUID){
-        this.crimeId = crimeId
-        crimeLiveData = crimeRepository.getCrime(crimeId)
-    }*/
-
 }
