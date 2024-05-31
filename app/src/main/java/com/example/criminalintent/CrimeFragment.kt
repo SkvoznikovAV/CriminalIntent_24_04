@@ -1,9 +1,11 @@
 package com.example.criminalintent
 
+import android.content.Intent
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.text.format.DateFormat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -27,6 +29,8 @@ private const val DIALOG_DATE = "DialogDate"
 private const val DIALOG_TIME = "DialogTime"
 private const val REQUEST_DATE = 0
 private const val REQUEST_TIME = 1
+private const val DATE_FORMAT = "EEE, MMM, dd"
+private const val REQUEST_CONTACT = 1
 
 class CrimeFragment: Fragment(), DatePickerFragment.Callbacks, TimePickerFragment.Callbacks {
     private lateinit var crime: Crime
@@ -36,6 +40,7 @@ class CrimeFragment: Fragment(), DatePickerFragment.Callbacks, TimePickerFragmen
     private lateinit var idField: TextView
     private lateinit var requiresPoliceCheckBox: CheckBox
     private lateinit var removeCrimeButton: Button
+    private lateinit var reportButton: Button
 
     private val crimeDetailViewModel: CrimeDetailViewModel by lazy {
         ViewModelProviders.of(this).get(CrimeDetailViewModel::class.java)
@@ -61,6 +66,7 @@ class CrimeFragment: Fragment(), DatePickerFragment.Callbacks, TimePickerFragmen
         idField = view.findViewById(R.id.crime_id) as TextView
         requiresPoliceCheckBox = view.findViewById(R.id.requires_police)
         removeCrimeButton = view.findViewById(R.id.delete_crime)
+        reportButton = view.findViewById(R.id.crime_report) as Button
 
         dateButton.apply {
             text = crime.date.toString()
@@ -124,6 +130,18 @@ class CrimeFragment: Fragment(), DatePickerFragment.Callbacks, TimePickerFragmen
             crimeDetailViewModel.removeCrime(crime)
             requireFragmentManager().popBackStack()
         }
+
+        reportButton.setOnClickListener {
+            Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, getCrimeReport())
+                putExtra(
+                    Intent.EXTRA_SUBJECT,
+                    getString(R.string.crime_report_subject))
+            }.also { intent ->
+                startActivity(intent)
+            }
+        }
     }
 
     override fun onStop() {
@@ -131,16 +149,20 @@ class CrimeFragment: Fragment(), DatePickerFragment.Callbacks, TimePickerFragmen
         crimeDetailViewModel.saveCrime(crime)
     }
 
-    companion object{
-        fun newInstance(crimeId: UUID): CrimeFragment {
-            val args = Bundle().apply {
-                putSerializable(ARG_CRIME_ID, crimeId)
-            }
-
-            return CrimeFragment().apply {
-                arguments = args
-            }
+    private fun getCrimeReport(): String {
+        val solvedString = if (crime.isSolved) {
+            getString(R.string.crime_report_solved)
+        } else {
+            getString(R.string.crime_report_unsolved)
         }
+        val dateString = DateFormat.format(DATE_FORMAT, crime.date).toString()
+        var suspect = if (crime.suspect.isBlank()) {
+            getString(R.string.crime_report_no_suspect)
+        } else {
+            getString(R.string.crime_report_suspect, crime.suspect)
+        }
+        return getString(R.string.crime_report,
+            crime.title, dateString, solvedString, suspect)
     }
 
     override fun onDateSelected(date: Date) {
@@ -162,5 +184,17 @@ class CrimeFragment: Fragment(), DatePickerFragment.Callbacks, TimePickerFragmen
 
         crime.date = GregorianCalendar(year, month, day,hour,minute).time
         updateUI()
+    }
+
+    companion object{
+        fun newInstance(crimeId: UUID): CrimeFragment {
+            val args = Bundle().apply {
+                putSerializable(ARG_CRIME_ID, crimeId)
+            }
+
+            return CrimeFragment().apply {
+                arguments = args
+            }
+        }
     }
 }
